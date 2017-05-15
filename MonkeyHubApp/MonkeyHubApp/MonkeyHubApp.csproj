@@ -47,7 +47,7 @@
     <Compile Include="ContentWebPage.xaml.cs">
       <DependentUpon>ContentWebPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control\MyListView.cs" />
+    <Compile Include="Control\ListViewBehavior.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

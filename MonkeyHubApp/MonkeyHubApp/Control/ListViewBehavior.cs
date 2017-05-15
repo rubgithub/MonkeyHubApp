@@ -8,31 +8,31 @@ namespace MonkeyHubApp.Control
     
     //Attached Behaviors LEMBRE-SE
     //https://developer.xamarin.com/guides/xamarin-forms/application-fundamentals/behaviors/attached/
-    public class MyListView : ListView
+    public class ListViewBehavior //MyListView : ListView
     {
         public static readonly BindableProperty ItemTappedCommandProperty =
         BindableProperty.CreateAttached(
             "ItemTappedCommand",
             typeof(ICommand),
-            typeof(MyListView),
+            typeof(ListViewBehavior),
             null,
             propertyChanged: OnCommandChanged);
 
-        public MyListView(ListViewCachingStrategy strategy) : base(strategy)
-        {
-        }
+        //public MyListView(ListViewCachingStrategy strategy) : base(strategy)
+        //{
+        //}
 
-        public MyListView() : this(ListViewCachingStrategy.RecycleElement)
-        {
-        }
+        //public MyListView() : this(ListViewCachingStrategy.RecycleElement)
+        //{
+        //}
 
-        public ICommand ItemTappedCommand {
-            get { return (ICommand)GetValue(ItemTappedCommandProperty); }
-            set
-            {
-                SetValue(ItemTappedCommandProperty, value);
-            }
-        }
+        //public ICommand ItemTappedCommand {
+        //    get { return (ICommand)GetValue(ItemTappedCommandProperty); }
+        //    set
+        //    {
+        //        SetValue(ItemTappedCommandProperty, value);
+        //    }
+        //}
 
         static void OnCommandChanged(BindableObject view, object oldValue, object newValue)
         {

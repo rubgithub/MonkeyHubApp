@@ -15,7 +15,7 @@
         <ListView 
             ItemsSource="{Binding Tags}" 
             HasUnevenRows="True"
-            b:MyListView.ItemTappedCommand="{Binding ShowCategoryCommand}"              
+            b:ListViewBehavior.ItemTappedCommand="{Binding ShowCategoryCommand}"              
             >
             <ListView.ItemTemplate>
                 <DataTemplate>
