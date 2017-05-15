@@ -26,7 +26,7 @@ namespace MonkeyHubApp.ViewModels
             }
         }
 
-        public ObservableCollection<Tag> Resultados { get; }
+        public ObservableCollection<Tag> Tags { get; }
 
         public Command SearchCommand { get; }
         public Command AboutCommand { get; }
@@ -40,7 +40,7 @@ namespace MonkeyHubApp.ViewModels
             AboutCommand = new Command(ExecuteAboutCommand);
             ShowCategoryCommand = new Command<Tag>(ExecuteShowCategoryCommand);
 
-            Resultados = new ObservableCollection<Tag>();
+            Tags = new ObservableCollection<Tag>();
 
         }
 
@@ -57,26 +57,39 @@ namespace MonkeyHubApp.ViewModels
         async void ExecuteSearchCommand()
         {
             //App.Current.MainPage - não recomendado pois código fica acoplado não permitindo testes
-            var resposta = await App.Current.MainPage.DisplayAlert("MonkeyHubApp", $"Você procurou por: '{SearchTerm}'", "Sim", "Não");
-            if (resposta)
+            //var resposta = await App.Current.MainPage.DisplayAlert("MonkeyHubApp", $"Você procurou por: '{SearchTerm}'", "Sim", "Não");
+            //if (resposta)
+            //{
+            await Application.Current.MainPage.DisplayAlert("MonkeyHubApp", "Obrigado por pesquisar", "OK");
+            Tags.Clear();
+            var tagsRetornadas = await _monkeyHubApiService.GetTagsAsync();
+            if (tagsRetornadas != null)
             {
-                await App.Current.MainPage.DisplayAlert("MonkeyHubApp", "Obrigado por pesquisar", "OK");
-
-                Resultados.Clear();
-                var tagsRetornadas = await _monkeyHubApiService.GetTagsAsync();
-                if (tagsRetornadas != null)
+                foreach (var tag in tagsRetornadas)
                 {
-                    foreach (var tag in tagsRetornadas)
-                    {
-                        Resultados.Add(tag);
-                    }
+                    Tags.Add(tag);
                 }
             }
+            //}
         }
 
         bool CanExecuteSearchCommand()
         {
             return !string.IsNullOrWhiteSpace(SearchTerm);
+        }
+
+        public override async Task LoadAsync()
+        {
+            var tags = await _monkeyHubApiService.GetTagsAsync();
+
+            System.Diagnostics.Debug.WriteLine("FOUND {0} TAGS", tags.Count);
+            Tags.Clear();
+            foreach (var tag in tags)
+            {
+                Tags.Add(tag);
+            }
+
+            OnPropertyChanged(nameof(Tags));
         }
 
     }

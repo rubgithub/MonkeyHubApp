@@ -6,7 +6,9 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
+[assembly: Dependency(typeof(MonkeyHubApp.Services.MonkeyHubApiService))]
 namespace MonkeyHubApp.Services
 {
     public class MonkeyHubApiService : IMonkeyHubApiService
