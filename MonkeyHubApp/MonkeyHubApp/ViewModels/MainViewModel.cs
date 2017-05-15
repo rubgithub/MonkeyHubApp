@@ -1,4 +1,5 @@
 ﻿using MonkeyHubApp.Model;
+using MonkeyHubApp.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace MonkeyHubApp.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private const string BaseUrl = "https://monkey-hub-api.azurewebsites.net/api/";
+        private readonly IMonkeyHubApiService _monkeyHubApiService;
 
         private string _searchTerm;
         public string SearchTerm
@@ -29,37 +30,28 @@ namespace MonkeyHubApp.ViewModels
 
         public Command SearchCommand { get; }
         public Command AboutCommand { get; }
+        public Command ShowCategoryCommand { get; }
 
-        public MainViewModel()
+        public MainViewModel(IMonkeyHubApiService monkeyHubApiService)
         {
+            _monkeyHubApiService = monkeyHubApiService;
+
             SearchCommand = new Command(ExecuteSearchCommand, CanExecuteSearchCommand);
             AboutCommand = new Command(ExecuteAboutCommand);
+            ShowCategoryCommand = new Command<Tag>(ExecuteShowCategoryCommand);
+
             Resultados = new ObservableCollection<Tag>();
+
+        }
+
+        private async void ExecuteShowCategoryCommand(Tag tag)
+        {
+            await PushAsync<CategoriaViewModel>(_monkeyHubApiService, tag);
         }
 
         private async void ExecuteAboutCommand()
         {
             await PushAsync<AboutVeiwModel>();
-        }
-
-        public async Task<List<Tag>> GetTagsAsync()
-        {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await httpClient.GetAsync($"{BaseUrl}Tags").ConfigureAwait(false);
-
-            if (response.IsSuccessStatusCode)
-            {
-                using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                {
-                    return JsonConvert.DeserializeObject<List<Tag>>(
-                        await new StreamReader(responseStream)
-                            .ReadToEndAsync().ConfigureAwait(false));
-                }
-            }
-
-            return null;
         }
 
         async void ExecuteSearchCommand()
@@ -71,7 +63,7 @@ namespace MonkeyHubApp.ViewModels
                 await App.Current.MainPage.DisplayAlert("MonkeyHubApp", "Obrigado por pesquisar", "OK");
 
                 Resultados.Clear();
-                var tagsRetornadas = await GetTagsAsync();
+                var tagsRetornadas = await _monkeyHubApiService.GetTagsAsync();
                 if (tagsRetornadas != null)
                 {
                     foreach (var tag in tagsRetornadas)
@@ -80,7 +72,6 @@ namespace MonkeyHubApp.ViewModels
                     }
                 }
             }
-
         }
 
         bool CanExecuteSearchCommand()

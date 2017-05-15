@@ -5,12 +5,13 @@
              x:Class="MonkeyHubApp.MainPage"
              Title="Página Inicial"
              >
-
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="About" Command="{Binding AboutCommand}"/>
+    </ContentPage.ToolbarItems>
     <StackLayout>
-        <Button Text="Navegação Tela Sobre" Command="{Binding AboutCommand}"/>
         <Entry Text="{Binding SearchTerm}"/>
         <Button Text="Pesquiar" Command="{Binding SearchCommand}"/>
-        <ListView ItemsSource="{Binding Resultados}">
+        <ListView ItemsSource="{Binding Resultados}" ItemSelected="ListView_OnItemSelected">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextCell Text="{Binding Name}" Detail="{Binding Description}"/>
